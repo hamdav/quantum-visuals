@@ -6,7 +6,8 @@ Feel free to copy, distribute and modify as you please but leave a reference to 
 
 ## spherical_harmonics.py
 
-Creates a matplotlib figure displaying the spherical harmonics $ Y_\ell^m(\theta, \phi) $. 
+Creates a matplotlib figure displaying the spherical harmonics $ Y_\ell^m(\theta, \phi) $,
+i.e. the angular solutions to the schrodinger equation if the potential has spherical symmetry. 
 Beware that $ \ell $ must be a non-negative integer 
 and $ m $ must be an integer in the range $ [-\ell, \ell] $. 
 
