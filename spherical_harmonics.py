@@ -1,3 +1,4 @@
+# By David Hambraeus - https://github.com/hamdav
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.special as sp
@@ -8,18 +9,17 @@ plt.style.use('seaborn-darkgrid')
 
 
 # Resultion is the number of points per 2*pi radians
-# Higher numbers give prettier plots but slower interactions
+# Higher numbers give prettier plots but less responsive plots
 # I am able to smoothly rotate plots with a resolution of around 40-50
 # but this probably varies with the beefyness of your computer
-resolution = 100
+resolution = 150
 
 
-# Function returning grid of angles and radii given order and degree
-def Ylm(l, m, n_points=40):
-    theta, phi = np.linspace(0, np.pi, int(n_points/2)), np.linspace(0, 2 * np.pi, n_points)
-    THETA, PHI = np.meshgrid(theta, phi)
+# Function returning grid of radii given order and degree and meshgrid of angles.
+# The convention used is PHI for azimuthal angle and THETA for polar.
+def Ylm(l, m, THETA, PHI):
     R = np.abs(np.sqrt((2*l+1)/(4*np.pi * np.prod(np.arange(l+m, l-m, -1)))) * np.exp(1j * m * PHI) * sp.lpmv(m, l, np.cos(THETA)))
-    return R, PHI, THETA
+    return R
 
 
 # Converts spherical gridvalues to cartesian
@@ -40,7 +40,11 @@ plt.subplots_adjust(bottom=0.2)
 l_init, m_init = 0, 0
 
 # Calculate the initial surface
-R, PHI, THETA = Ylm(l_init, m_init)
+thetas = np.linspace(0, np.pi, int(resolution/2))
+phis = np.linspace(0, 2 * np.pi, resolution)
+THETA, PHI = np.meshgrid(thetas, phis)
+
+R = Ylm(l_init, m_init, THETA, PHI)
 X, Y, Z = spherical_to_cart(R, PHI, THETA)
 
 # Create a colomap
@@ -73,7 +77,7 @@ def update(_):
         ax.set_title(r'$\ell = $' + str(l) + r'$,m=$' + str(m) + ' Loading...')
         plt.draw()
         # Calculate the new surface from the inputted l and m
-        R, PHI, THETA = Ylm(l, m, resolution)
+        R = Ylm(l, m, THETA, PHI)
         X, Y, Z = spherical_to_cart(R, PHI, THETA)
         # Create a new normalization as the R has change
         norm = mcolors.Normalize(vmin=R.min(), vmax=R.max())
@@ -98,6 +102,5 @@ l_text_box.on_submit(update)
 maxbox = plt.axes([0.5, 0.05, 0.1, 0.075])
 m_text_box = TextBox(maxbox, r'$m$   ', initial=m_init)
 m_text_box.on_submit(update)
-
 
 plt.show()
