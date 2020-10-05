@@ -1,5 +1,0 @@
-sfmltest: sfmltest.o
-	g++ sfmltest.o -o sfmltest -lsfml-window -lsfml-system
-
-sfmltest.o: sfmltest.cpp
-	g++ -c sfmltest.cpp
